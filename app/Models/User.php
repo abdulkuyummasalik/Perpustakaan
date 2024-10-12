@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -17,6 +16,12 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+
+     public function loans()
+    {
+        return $this->hasMany(Loan::class);
+    }
+
     protected $fillable = [
         'name',
         'email',

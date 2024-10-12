@@ -12,11 +12,26 @@ use Illuminate\Support\Facades\Storage;
 class BookController extends Controller
 {
     // Untuk Admin
-    public function index()
+    public function index(Request $request)
     {
-        $books = Book::with('category')->paginate(10);
-        return view('admin.books.index', compact('books'));
+        $search = $request->input('search');
+
+        $books = Book::with('category')
+            ->when($search, function ($query, $search) {
+                return $query->where('title', 'LIKE', "%{$search}%")
+                    ->orWhere('author', 'LIKE', "%{$search}%")
+                    ->orWhere('publisher', 'LIKE', "%{$search}%")
+                    ->orWhere('year', 'LIKE', "%{$search}%")
+                    ->orWhere('stock', 'LIKE', "%{$search}%")
+                    ->orWhereHas('category', function ($q) use ($search) {
+                        $q->where('name', 'LIKE', "%{$search}%");
+                    });
+            })
+            ->simplePaginate(10);
+
+        return view('admin.books.index', compact('books', 'search'));
     }
+
 
     public function create()
     {
@@ -110,30 +125,17 @@ class BookController extends Controller
         return redirect()->route('admin.book.index')->with('success', 'Buku berhasil dihapus');
     }
 
-
-
-
-    public function search(Request $request)
-    {
-        $keyword = $request->input('search');
-
-        $books = Book::where('title', 'LIKE', "%{$keyword}%")
-            ->orWhere('author', 'LIKE', "%{$keyword}%")
-            ->orWhere('publisher', 'LIKE', "%{$keyword}%")
-            ->orWhere('year', 'LIKE', "%{$keyword}%")
-            ->orWhere('stock', 'LIKE', "%{$keyword}%")
-            ->orWhereHas('category', function ($query) use ($keyword) {
-                $query->where('name', 'LIKE', "%{$keyword}%");
-            })
-            ->paginate(10);
-
-        return view('admin.books.index', ['books' => $books, 'search' => $keyword]);
-    }
-
     // Untuk User
-    public function userIndex()
+    public function userIndex(Request $request)
     {
-        $books = Book::with('category')->get();
-        return view('user.books.index', compact('books'));
+        $search = $request->input('search');
+        $books = Book::when($search, function ($query, $search) {
+                return $query->where('title', 'LIKE', "%{$search}%")
+                    ->orWhere('author', 'LIKE', "%{$search}%");
+            })
+            ->simplePaginate(10);
+
+
+        return view('user.books.index', compact('books', 'search'));
     }
 }

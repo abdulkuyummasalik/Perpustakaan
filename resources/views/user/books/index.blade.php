@@ -3,39 +3,46 @@
 @section('content')
     <div class="container mt-5">
         <h1 class="text-center mb-4 fw-bold text-primary">Daftar Buku</h1>
+
+        <form action="{{ route('user.book.index') }}" method="GET" class="mb-4">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Cari buku atau pengarang..."
+                    value="{{ request('search') }}">
+                <button class="btn btn-primary ms-2" type="submit">Cari</button>
+            </div>
+        </form>
+
         <div class="row justify-content-center">
-            @foreach ($books as $book)
-                <div class="col-md-3 mb-4">
+            @forelse ($books as $book)
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                     <div class="card shadow-sm h-100">
                         <img src="{{ asset('storage/' . $book->image) }}" alt="{{ $book->title }}" class="card-img-top"
-                            style="height: 300px; object-fit: cover;">
-                        <div class="card-body d-flex flex-column">
+                            style="height: 250px; object-fit: cover;">
+                        <div class="card-body d-flex flex-column p-3" style="min-height: 250px;">
                             <h5 class="card-title fw-bold text-primary text-truncate">{{ $book->title }}</h5>
-                            <table class="table table-borderless table-sm mb-2">
-                                <tr>
-                                    <th class="text-muted" style="width: 40%;">Pengarang:</th>
-                                    <td class="text-truncate">{{ $book->author }}</td>
-                                </tr>
-                                <tr>
-                                    <th class="text-muted">Penerbit:</th>
-                                    <td class="text-truncate">{{ $book->publisher }}</td>
-                                </tr>
-                                <tr>
-                                    <th class="text-muted">Tahun:</th>
-                                    <td>{{ $book->year }}</td>
-                                </tr>
-                                <tr>
-                                    <th class="text-muted">Stok:</th>
-                                    <td>
-                                        @if ($book->stock > 0)
-                                            <span class="text-success">{{ $book->stock }} tersedia</span>
-                                        @else
-                                            <span class="text-danger">Tidak tersedia</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                            </table>
-                            <div class="mt-auto">
+                            <div class="">
+                                <span class="text-muted">Pengarang:</span>
+                                <span class="mb-2 d-block text-truncate" style="max-width: 150px;">{{ $book->author }}</span>
+                            </div>
+                            <div class="">
+                                <span class="text-muted">Penerbit:</span>
+                                <span class="mb-2 d-block text-truncate" style="max-width: 150px;">{{ $book->publisher }}</span>
+                            </div>
+                            <div class="">
+                                <span class="text-muted mb-2">Tahun:</span>
+                                <span class="mb-2">{{ $book->year }}</span>
+                            </div>
+                            <div class="">
+                                <span class="text-muted">Stok:</span>
+                                <span>
+                                    @if ($book->stock > 0)
+                                        <span class="text-success mb-2">{{ $book->stock }} tersedia</span>
+                                    @else
+                                        <span class="text-danger mb-2">Tidak tersedia</span>
+                                    @endif
+                                </span>
+                            </div>
+                            <div class="mt-auto text-center">
                                 @if ($book->stock > 0)
                                     <form action="{{ route('user.book.borrow', $book->id) }}" method="POST">
                                         @csrf
@@ -52,10 +59,20 @@
                         </div>
                     </div>
                 </div>
-            @endforeach
+            @empty
+                <div class="alert alert-warning">
+                    @if (request()->input('search'))
+                        Tidak ada buku yang ditemukan untuk kata kunci
+                        "<strong>{{ request()->input('search') }}</strong>".
+                    @else
+                        Tidak ada buku yang tersedia.
+                    @endif
+                </div>
+            @endforelse
         </div>
+
         <div class="d-flex justify-content-center mt-4">
-            {{-- {{ $books->links() }} --}}
+            {{ $books->links() }}
         </div>
     </div>
 @endsection

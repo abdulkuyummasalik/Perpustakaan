@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
 
 
@@ -24,10 +25,11 @@ Route::get('/', function () {
     return view('home');
 });
 
-Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+Route::get('/register', [AuthController::class, 'showRegisterForm'])->middleware('guest')->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+// admin dan user sudah login tidak boleh login lagi
+Route::get('/login', [AuthController::class, 'showLoginForm'])->middleware('guest')->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::post('/logout', function () {
@@ -62,13 +64,14 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         Route::get('/{slug}/edit', [BookController::class, 'edit'])->name('edit');
         Route::patch('/{slug}', [BookController::class, 'update'])->name('update');
         Route::delete('/{book:slug}', [BookController::class, 'destroy'])->name('destroy');
-        Route::get('/search', [BookController::class, 'search'])->name('search');
     });
 
     Route::prefix('loans')->name('loans.')->group(function () {
         Route::get('/', [LoanController::class, 'adminIndex'])->name('index');
         Route::get('/history', [LoanController::class, 'adminHistory'])->name('history');
     });
+
+    Route::get('/profile', [ProfileController::class, 'showAdmin'])->name('profile');
 });
 
 
@@ -83,6 +86,7 @@ Route::prefix('user')->name('user.')->middleware('user')->group(function () {
         Route::get('/', [LoanController::class, 'index'])->name('index');
         Route::get('/history', [LoanController::class, 'history'])->name('history');
         Route::post('/return/{id}', [LoanController::class, 'return'])->name('return');
-        Route::delete('/history/{id}', [LoanController::class, 'deleteHistory'])->name('history.delete');
     });
+
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
 });

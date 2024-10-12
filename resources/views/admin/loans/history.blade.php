@@ -2,11 +2,25 @@
 @section('content')
     <div class="container">
         <h1 class="mb-4 text-center">Riwayat Peminjaman (Admin)</h1>
+
+        <form action="{{ route('admin.loans.history') }}" method="GET" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Cari pengguna atau buku..." value="{{ request('search') }}">
+                <button type="submit" class="btn btn-primary ms-2">Cari</button>
+            </div>
+        </form>
+
         @if ($loans->isEmpty())
-            <div class="alert alert-warning">Tidak ada riwayat peminjaman.</div>
+            <div class="alert alert-warning">
+                @if (request()->input('search'))
+                    Tidak ada riwayat peminjaman yang ditemukan untuk kata kunci "<strong>{{ request()->input('search') }}</strong>".
+                @else
+                    Tidak ada riwayat peminjaman yang tersedia.
+                @endif
+            </div>
         @else
-        <table class="table table-striped table-hover align-middle">
-            <thead class="thead-light table-primary">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="thead-light table-primary">
                     <tr>
                         <th>No</th>
                         <th>Nama Pengguna</th>
@@ -18,7 +32,7 @@
                 <tbody>
                     @foreach ($loans as $key => $loan)
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ ($loans->currentPage() - 1) * $loans->perPage() + ($key + 1) }}</td>
                             <td>{{ $loan->user->name }}</td>
                             <td>{{ $loan->book->title }}</td>
                             <td>{{ $loan->borrowed_at->format('d-m-Y') }}</td>
@@ -28,7 +42,7 @@
                 </tbody>
             </table>
             <div class="d-flex justify-content-center">
-                {{-- {{ $loans->links() }} --}}
+                {{ $loans->links() }}
             </div>
         @endif
     </div>

@@ -14,7 +14,6 @@ class CreateLoansTable extends Migration
             $table->foreignId('book_id')->constrained()->onDelete('cascade');
             $table->timestamp('borrowed_at')->nullable();
             $table->timestamp('returned_at')->nullable();
-            $table->timestamp('deleted_by_user_at')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

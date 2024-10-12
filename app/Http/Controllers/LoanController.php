@@ -10,45 +10,57 @@ use Illuminate\Support\Facades\Auth;
 class LoanController extends Controller
 {
     // Untuk Admin
-    public function adminIndex()
+    public function adminIndex(Request $request)
     {
+        $search = $request->input('search');
         $loans = Loan::with(['user', 'book'])
             ->whereNull('returned_at')
-            ->paginate(10);
+            ->when($search, function ($query) use ($search) {
+                return $query->whereHas('user', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                })->orWhereHas('book', function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%");
+                });
+            })
+            ->simplePaginate(10);
 
-        return view('admin.loans.index', compact('loans'));
+        return view('admin.loans.index', compact('loans', 'search'));
     }
 
-    public function adminHistory()
+    public function adminHistory(Request $request)
     {
+        $search = $request->input('search');
+
         $loans = Loan::with(['user', 'book'])
             ->whereNotNull('returned_at')
-            ->paginate(10);
+            ->whereHas('user', function ($q) use ($request) {
+                $q->where('name', 'like', "%{$request->search}%");
+            })
+            ->orWhereHas('book', function ($q) use ($request) {
+                $q->where('title', 'like', "%{$request->search}%");
+            })
+            ->simplePaginate(10);
 
-        return view('admin.loans.history', compact('loans'));
+        return view('admin.loans.history', compact('loans', 'search'));
     }
 
 
     // Untuk User
-    public function index()
+    public function index(Request $request)
     {
-        $loans = Loan::where('user_id', auth()->id())
-            ->whereNull('returned_at')
-            ->with('book')
-            ->paginate(10);
+        $query = Loan::with('book')->where('user_id', auth()->id())->whereNull('returned_at');
+
+        if ($request->has('search') && !empty($request->search)) {
+            $query->whereHas('book', function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                    ->orWhere('author', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        // Gunakan paginate untuk menampilkan pagination
+        $loans = $query->simplePaginate(10);
 
         return view('user.loans.index', compact('loans'));
-    }
-
-    public function history()
-    {
-        $history = Loan::where('user_id', auth()->id())
-            ->whereNull('deleted_by_user_at')
-            ->with('book')
-            ->orderBy('borrowed_at', 'desc')
-            ->paginate(10);
-
-        return view('user.loans.history', compact('history'));
     }
 
     public function borrow(Request $request, $id)
@@ -86,17 +98,18 @@ class LoanController extends Controller
         return redirect()->route('user.loans.index')->with('success', 'Buku berhasil dikembalikan.');
     }
 
-    public function deleteHistory($id)
+    public function history(Request $request)
     {
-        $loan = Loan::where('user_id', auth()->id())->findOrFail($id);
+        $query = Loan::with('book')->where('user_id', auth()->id())->whereNotNull('returned_at');
 
-        if ($loan->returned_at !== null) {
-            $loan->deleted_by_user_at = now();
-            $loan->save();
-
-            return redirect()->route('user.loans.history')->with('success', 'Riwayat peminjaman berhasil dihapus.');
+        if ($request->has('search') && !empty($request->search)) {
+            $query->whereHas('book', function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                    ->orWhere('author', 'like', '%' . $request->search . '%');
+            });
         }
 
-        return redirect()->route('user.loans.history')->with('error', 'Anda hanya bisa menghapus riwayat peminjaman yang sudah dikembalikan.');
+        $history = $query->simplePaginate(10);
+        return view('user.loans.history', compact('history'));
     }
 }

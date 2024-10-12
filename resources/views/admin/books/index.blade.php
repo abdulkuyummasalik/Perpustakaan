@@ -1,23 +1,32 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>Daftar Buku</h1>
+        <h1 class="mb-4">Daftar Buku</h1>
+        <div class="d-flex justify-content-between align-items-center mb-3">
             <a href="{{ route('admin.book.create') }}" class="btn btn-primary">
                 <i class="fas fa-plus-circle"></i> Tambah Buku
             </a>
-        </div>
-        <form action="{{ route('admin.book.search') }}" method="GET" class="mb-4">
-            <div class="input-group">
-                <input type="text" name="search" placeholder="Cari buku..." value="{{ request()->input('search') }}"
-                    class="form-control" aria-label="Cari buku">
-                <div class="input-group-append">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-search"></i> Cari
-                    </button>
+
+            {{-- <form action="{{ route('admin.book.search') }}" method="GET">
+                <div class="input-group">
+                    <input type="text" name="search" placeholder="Cari buku..." value="{{ request()->input('search') }}"
+                        class="form-control" aria-label="Cari buku">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary ms-2">
+                            <i class="fas fa-search"></i> Cari
+                        </button>
+                    </div>
                 </div>
-            </div>
-        </form>
+            </form> --}}
+
+            <form action="{{ route('admin.book.index') }}" method="GET" class="mb-4">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="Cari buku atau pengarang..."
+                        value="{{ request('search') }}">
+                    <button class="btn btn-primary ms-2" type="submit">Cari</button>
+                </div>
+            </form>
+        </div>
         @if (session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
@@ -47,9 +56,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($books as $book)
+                        @foreach ($books as $key => $book)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ ($books->currentPage() - 1) * $books->perPage() + ($key + 1) }}</td>
                                 <td>
                                     {{-- <?php dd($book->image); ?> --}}
                                     <img src="{{ asset('storage/' . $book->image) }}" alt="{{ $book->title }}"

@@ -73,19 +73,6 @@
                         </a>
                     </div>
                 </div>
-                <div class="row mt-5">
-                    <div class="col-md-4">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body text-center">
-                                <h5 class="card-title text-primary fw-bold">Buku Rekomendasi</h5>
-                                <p class="card-text text-muted">Temukan buku-buku yang direkomendasikan pembaca lain.</p>
-                                <a href="{{ route('user.book.index') }}" class="btn btn-outline-primary rounded-pill">
-                                    <i class="bi bi-star-fill me-2"></i> Lihat Rekomendasi
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         @endif
     @endauth

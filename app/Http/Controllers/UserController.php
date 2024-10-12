@@ -8,10 +8,18 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all();
-        return view('admin.users.index', compact('users'));
+        $search = $request->input('search');
+
+        $users = User::withCount('loans')
+            ->when($search, function ($query, $search) {
+                return $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('role','LIKE',"%{$search}%");
+            })->simplePaginate(10);
+
+        return view('admin.users.index', compact('users', 'search'));
     }
 
     public function create()

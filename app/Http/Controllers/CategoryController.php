@@ -53,6 +53,6 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
         $category->delete();
 
-        return redirect()->route('admin.category.index')->with('success', 'Kategori berhasil dihapus.');
+        return redirect()->route('admin.category.index')->with('deleted', 'Kategori berhasil dihapus.');
     }
 }

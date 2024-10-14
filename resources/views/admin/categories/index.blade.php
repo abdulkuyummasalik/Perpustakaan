@@ -1,77 +1,88 @@
 @extends('layouts.app')
+
 @section('content')
-    <div class="container">
-        <h1 class="mb-4">Daftar Kategori</h1>
-        @if (session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
-
-
-        <div class="d-flex justify-content-between mb-3">
-            <a href="{{ route('admin.category.create') }}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Tambah Kategori
-            </a>
-
-            <form action="{{ route('admin.category.index') }}" method="GET">
-                <div class="input-group">
-                    <input type="text" name="search" placeholder="Cari kategori..." value="{{ request()->input('search') }}"
-                        class="form-control">
-                    <div class="input-group-append">
-                        <button type="submit" class="btn btn-primary ms-2">
-                            <i class="fas fa-search"></i> Cari
-                        </button>
-                    </div>
+    <div class="container mt-4">
+        <div class="card shadow-lg rounded-0">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">Manajemen Kategori</h3>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <a href="{{ route('admin.category.create') }}" class="btn btn-primary me-2 rounded-0">
+                        <i class="fas fa-plus-circle"></i> Tambah Kategori
+                    </a>
+                    <form action="{{ route('admin.category.index') }}" method="GET" class="flex-grow-1">
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-control rounded-0" placeholder="Cari kategori..."
+                                value="{{ request('search') }}">
+                            <button class="btn btn-primary rounded-0" type="submit">
+                                <i class="fas fa-search"></i> Cari
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>
-        </div>
 
-        @if ($categories->isEmpty())
-            <div class="alert alert-warning">
-                @if (request()->input('search'))
-                    Tidak ada category yang ditemukan untuk kata kunci "<strong>{{ request()->input('search') }}</strong>".
+                @if (session('success'))
+                    <div class="alert alert-success">{{ session('success') }}</div>
+                @endif
+                @if (session('deleted'))
+                    <div class="alert alert-danger">{{ session('deleted') }}</div>
+                @endif
+
+                @if ($categories->isEmpty())
+                    <div class="alert alert-warning">
+                        @if (request()->input('search'))
+                            Tidak ada kategori yang ditemukan untuk kata kunci
+                            "<strong>{{ request()->input('search') }}</strong>".
+                        @else
+                            Tidak ada kategori yang tersedia.
+                        @endif
+                    </div>
                 @else
-                    Tidak ada category yang tersedia.
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover align-middle text-center">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Kategori</th>
+                                    <th>Jumlah Buku</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($categories as $index => $category)
+                                    <tr>
+                                        <td>{{ ($categories->currentPage() - 1) * $categories->perPage() + ($index + 1) }}
+                                        </td>
+                                        <td>{{ $category->name }}</td>
+                                        <td>{{ $category->books_count }}</td>
+                                        <td>
+                                            <div class="btn-group" role="group" aria-label="Aksi Kategori">
+                                                <a href="{{ route('admin.category.edit', $category->id) }}"
+                                                    class="btn btn-warning btn-sm rounded-0 me-2" title="Edit">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </a>
+                                                <form action="{{ route('admin.category.destroy', $category->id) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger btn-sm rounded-0"
+                                                        title="Hapus">
+                                                        <i class="fas fa-trash"></i> Hapus
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-center mt-3">
+                        {{ $categories->links() }}
+                    </div>
                 @endif
             </div>
-        @else
-            <table class="table table-striped table-hover align-middle">
-                <thead class="thead-light table-primary">
-                    <tr>
-                        <th>No</th>
-                        <th>Nama Kategori</th>
-                        <th>Jumlah Buku</th>
-                        <th class="text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($categories as $index => $category)
-                        <tr>
-                            <td>{{ ($categories->currentPage() - 1) * $categories->perPage() + ($index + 1) }}</td>
-                            <td>{{ $category->name }}</td>
-                            <td>{{ $category->books_count }}</td>
-                            <td class="text-center">
-                                <div class="d-flex justify-content-center">
-                                    <a href="{{ route('admin.category.edit', $category->id) }}"
-                                        class="btn btn-warning btn-sm me-2">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </a>
-                                    <form action="{{ route('admin.category.destroy', $category->id) }}" method="POST"
-                                        style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash-alt"></i> Hapus
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-            <div class="d-flex justify-content-center">
-                {{ $categories->links() }}
-            </div>
-        @endif
+        </div>
     </div>
 @endsection

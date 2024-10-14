@@ -1,79 +1,119 @@
 @extends('layouts.app')
 
 @section('content')
+    <!-- Belum Login -->
     @guest
-        <div class="container mt-5 text-center">
-            <div class="row justify-content-center">
-                <div class="col-md-10">
-                    <h1 class="display-3 fw-bold text-primary">Selamat Datang di Perpustakaan KM-28</h1>
-                    <p class="lead text-secondary mt-3">
-                        Nikmati koleksi buku terbaik kami dan akses fitur eksklusif perpustakaan.
-                        Silakan login atau daftar terlebih dahulu untuk memulai petualangan literasi Anda.
-                    </p>
-                    <a href="{{ route('login') }}" class="btn btn-lg btn-primary px-5 mt-4 shadow-sm rounded-pill">
-                        <i class="bi bi-box-arrow-in-right me-2"></i> Login
-                    </a>
-                </div>
+        <section class="hero d-flex align-items-center">
+            <div class="container text-center py-5">
+                <h1 class="display-3 fw-bold text-primary">Selamat Datang di Perpustakaan KM-28</h1>
+                <p class="lead text-secondary mt-4">
+                    Eksplorasi dunia literasi dengan koleksi buku terbaik kami. Mulai perjalanan membaca Anda sekarang juga!
+                </p>
+                <a href="{{ route('login') }}" class="btn btn-lg btn-primary px-5 mt-4 shadow-sm rounded-pill">
+                    <i class="bi bi-box-arrow-in-right me-2"></i> Login Sekarang
+                </a>
+                {{-- <div class="mt-5">
+                    <img src="path_to_welcome_image.jpg" alt="Perpustakaan" class="img-fluid rounded-3 shadow-lg"
+                        style="max-height: 400px;">
+                </div> --}}
             </div>
-            <div class="mt-5">
-                {{-- <img src="path_to_welcome_image.jpg" alt="Welcome" class="img-fluid rounded-3 shadow-lg"> --}}
-            </div>
-        </div>
+        </section>
     @endguest
+
+    <!-- Sudah Login -->
     @auth
         @if (Auth::user()->role == 'admin')
-            <div class="container mt-5 text-center">
-                <div class="row justify-content-center">
-                    <div class="col-md-10">
-                        <h1 class="display-4 text-primary fw-bold">Selamat Datang, {{ Auth::user()->name }}</h1>
-                        <p class="lead text-secondary">Kelola koleksi buku dan nikmati fitur eksklusif perpustakaan kami.</p>
-                        <a href="{{ route('admin.book.index') }}"
-                            class="btn btn-lg btn-primary px-5 mt-3 shadow-sm rounded-pill">
-                            <i class="bi bi-book me-2"></i> Lihat Koleksi Buku
-                        </a>
-                    </div>
+            <section class="admin-dashboard py-5">
+                <div class="container text-center">
+                    <h1 class="display-4 text-primary fw-bold">Selamat Datang, {{ Auth::user()->name }}</h1>
+                    <p class="lead text-secondary">Kelola buku dan fitur lainnya dengan kemudahan di ujung jari Anda.</p>
+                    <a href="{{ route('admin.book.index') }}" class="btn btn-lg btn-primary px-5 mt-3 shadow-sm rounded-pill">
+                        <i class="bi bi-book me-2"></i> Lihat Koleksi Buku
+                    </a>
                 </div>
-                <div class="row mt-5">
-                    <div class="col-md-4">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body text-center">
-                                <h5 class="card-title text-primary fw-bold">Buku Terbaru</h5>
-                                <p class="card-text text-muted">Telusuri buku-buku terbaru yang ditambahkan di perpustakaan
-                                    kami.</p>
-                                <a href="{{ route('admin.book.index') }}" class="btn btn-outline-primary rounded-pill">
-                                    <i class="bi bi-book-half me-2"></i> Lihat Buku
-                                </a>
+                <div class="container mt-5">
+                    <div class="row text-center">
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100 text-dark shadow-lg">
+                                <div class="card-body d-flex flex-column align-items-center">
+                                    <i class="bi bi-book-half display-4 text-primary mb-3"></i>
+                                    <h5 class="card-title fw-bold">Buku Terbaru</h5>
+                                    <p class="card-text">Telusuri koleksi buku terbaru di perpustakaan kami.</p>
+                                    <a href="{{ route('admin.book.index') }}"
+                                        class="btn btn-outline-primary rounded-pill mt-auto">
+                                        Lihat Buku
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100 text-dark shadow-lg">
+                                <div class="card-body d-flex flex-column align-items-center">
+                                    <i class="bi bi-tags display-4 text-primary mb-3"></i>
+                                    <h5 class="card-title fw-bold">Kategori Buku</h5>
+                                    <p class="card-text">Telusuri buku berdasarkan kategori tertentu.</p>
+                                    <a href="{{ route('admin.category.index') }}"
+                                        class="btn btn-outline-primary rounded-pill mt-auto">
+                                        Eksplorasi Kategori
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100 text-dark shadow-lg">
+                                <div class="card-body d-flex flex-column align-items-center">
+                                    <i class="bi bi-bar-chart-line display-4 text-primary mb-3"></i>
+                                    <h5 class="card-title fw-bold">Statistik Peminjaman</h5>
+                                    <p class="card-text">Pantau statistik peminjaman buku dengan mudah.</p>
+                                    <a href="{{ route('admin.loans.index') }}"
+                                        class="btn btn-outline-primary rounded-pill mt-auto">
+                                        Lihat Statistik
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body text-center">
-                                <h5 class="card-title text-primary fw-bold">Kategori Buku</h5>
-                                <p class="card-text text-muted">Temukan buku berdasarkan kategori seperti fiksi, edukasi, dan
-                                    lainnya.</p>
-                                <a href="{{ route('admin.category.index') }}" class="btn btn-outline-primary rounded-pill">
-                                    <i class="bi bi-tags me-2"></i> Eksplorasi Kategori
-                                </a>
-                            </div>
-                        </div>
-                    </div>
                 </div>
-            </div>
+            </section>
         @else
-            <div class="container mt-5 text-center">
-                <div class="row justify-content-center">
-                    <div class="col-md-10">
-                        <h1 class="display-4 text-primary fw-bold">Selamat Datang, {{ Auth::user()->name }}</h1>
-                        <p class="lead text-secondary">Eksplorasi koleksi buku kami dan manfaatkan fitur perpustakaan yang kami
-                            sediakan.</p>
-                        <a href="{{ route('user.book.index') }}"
-                            class="btn btn-lg btn-primary px-5 mt-3 shadow-sm rounded-pill">
-                            <i class="bi bi-book me-2"></i> Lihat Koleksi Buku
-                        </a>
+            <section class="user-dashboard py-5">
+                <div class="container text-center">
+                    <h1 class="display-4 text-primary fw-bold">Selamat Datang, {{ Auth::user()->name }}</h1>
+                    <p class="lead text-secondary">Eksplorasi koleksi buku kami dan mulai pinjam buku favorit Anda.</p>
+                    <a href="{{ route('user.book.index') }}" class="btn btn-lg btn-primary px-5 mt-3 shadow-sm rounded-pill">
+                        <i class="bi bi-book me-2"></i> Lihat Koleksi Buku
+                    </a>
+                </div>
+                <div class="container mt-5">
+                    <div class="row text-center">
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 text-dark shadow-sm">
+                                <div class="card-body d-flex flex-column align-items-center">
+                                    <i class="bi bi-person-lines-fill display-4 text-primary mb-3"></i>
+                                    <h5 class="card-title fw-bold">Profil Saya</h5>
+                                    <p class="card-text">Kelola informasi akun dan lihat riwayat peminjaman Anda.</p>
+                                    <a href="{{ route('user.profile') }}" class="btn btn-outline-primary rounded-pill mt-auto">
+                                        Lihat Profil
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 text-dark shadow-sm">
+                                <div class="card-body d-flex flex-column align-items-center">
+                                    <i class="bi bi-clock-history display-4 text-primary mb-3"></i>
+                                    <h5 class="card-title fw-bold">Riwayat Peminjaman</h5>
+                                    <p class="card-text">Lihat riwayat buku yang pernah Anda pinjam.</p>
+                                    <a href="{{ route('user.loans.index') }}"
+                                        class="btn btn-outline-primary rounded-pill mt-auto">
+                                        Lihat Riwayat
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
         @endif
     @endauth
 @endsection

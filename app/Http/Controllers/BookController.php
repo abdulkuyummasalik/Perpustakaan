@@ -27,7 +27,7 @@ class BookController extends Controller
                         $q->where('name', 'LIKE', "%{$search}%");
                     });
             })
-            ->simplePaginate(10);
+            ->simplePaginate(5);
 
         return view('admin.books.index', compact('books', 'search'));
     }
@@ -122,7 +122,7 @@ class BookController extends Controller
         }
 
         $book->delete();
-        return redirect()->route('admin.book.index')->with('success', 'Buku berhasil dihapus');
+        return redirect()->route('admin.book.index')->with('deleted', 'Buku berhasil dihapus');
     }
 
     // Untuk User
@@ -133,7 +133,7 @@ class BookController extends Controller
                 return $query->where('title', 'LIKE', "%{$search}%")
                     ->orWhere('author', 'LIKE', "%{$search}%");
             })
-            ->simplePaginate(10);
+            ->simplePaginate(5);
 
 
         return view('user.books.index', compact('books', 'search'));

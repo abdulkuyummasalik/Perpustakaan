@@ -48,19 +48,31 @@ class LoanController extends Controller
     // Untuk User
     public function index(Request $request)
     {
-        $query = Loan::with('book')->where('user_id', auth()->id())->whereNull('returned_at');
+        // Peminjaman Aktif
+        $loansQuery = Loan::with('book')->where('user_id', auth()->id())->whereNull('returned_at');
 
         if ($request->has('search') && !empty($request->search)) {
-            $query->whereHas('book', function ($q) use ($request) {
+            $loansQuery->whereHas('book', function ($q) use ($request) {
                 $q->where('title', 'like', '%' . $request->search . '%')
                     ->orWhere('author', 'like', '%' . $request->search . '%');
             });
         }
 
-        // Gunakan paginate untuk menampilkan pagination
-        $loans = $query->simplePaginate(10);
+        $loans = $loansQuery->simplePaginate(5);
 
-        return view('user.loans.index', compact('loans'));
+        // Riwayat Peminjaman
+        $historyQuery = Loan::with('book')->where('user_id', auth()->id())->whereNotNull('returned_at');
+
+        if ($request->has('search') && !empty($request->search)) {
+            $historyQuery->whereHas('book', function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                    ->orWhere('author', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $history = $historyQuery->simplePaginate(5);
+
+        return view('user.loans.index', compact('loans', 'history'));
     }
 
     public function borrow(Request $request, $id)
@@ -96,20 +108,5 @@ class LoanController extends Controller
         }
 
         return redirect()->route('user.loans.index')->with('success', 'Buku berhasil dikembalikan.');
-    }
-
-    public function history(Request $request)
-    {
-        $query = Loan::with('book')->where('user_id', auth()->id())->whereNotNull('returned_at');
-
-        if ($request->has('search') && !empty($request->search)) {
-            $query->whereHas('book', function ($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->search . '%')
-                    ->orWhere('author', 'like', '%' . $request->search . '%');
-            });
-        }
-
-        $history = $query->simplePaginate(10);
-        return view('user.loans.history', compact('history'));
     }
 }

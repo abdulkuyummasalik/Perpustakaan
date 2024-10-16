@@ -9,24 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 class LoanController extends Controller
 {
-    // Untuk Admin
-    public function adminIndex(Request $request)
-    {
-        $search = $request->input('search');
-        $loans = Loan::with(['user', 'book'])
-            ->whereNull('returned_at')
-            ->when($search, function ($query) use ($search) {
-                return $query->whereHas('user', function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%");
-                })->orWhereHas('book', function ($q) use ($search) {
-                    $q->where('title', 'like', "%{$search}%");
-                });
-            })
-            ->simplePaginate(10);
-
-        return view('admin.loans.index', compact('loans', 'search'));
-    }
-
     public function adminHistory(Request $request)
     {
         $search = $request->input('search');

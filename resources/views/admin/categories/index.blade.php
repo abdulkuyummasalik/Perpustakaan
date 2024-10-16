@@ -58,11 +58,11 @@
                                         <td>{{ $category->books_count }}</td>
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Aksi Kategori">
-                                                <a href="{{ route('admin.category.edit', $category->id) }}"
+                                                <a href="{{ route('admin.category.edit', $category->slug) }}"
                                                     class="btn btn-warning btn-sm rounded-0 me-2" title="Edit">
                                                     <i class="fas fa-edit"></i> Edit
                                                 </a>
-                                                <form action="{{ route('admin.category.destroy', $category->id) }}"
+                                                <form action="{{ route('admin.category.destroy', $category->slug) }}"
                                                     method="POST">
                                                     @csrf
                                                     @method('DELETE')

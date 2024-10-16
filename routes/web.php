@@ -25,11 +25,11 @@ Route::get('/', function () {
     return view('home');
 });
 
-Route::get('/register', [AuthController::class, 'showRegisterForm'])->middleware('guest')->name('register');
+Route::get('/register', [AuthController::class, 'showRegisterForm'])->middleware('pengunjung')->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 
-// admin dan user sudah login tidak boleh login lagi
-Route::get('/login', [AuthController::class, 'showLoginForm'])->middleware('guest')->name('login');
+// admin dan user sudah login tidak boleh akses login
+Route::get('/login', [AuthController::class, 'showLoginForm'])->middleware('pengunjung')->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::post('/logout', function () {
@@ -52,9 +52,9 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         Route::get('/', [CategoryController::class, 'index'])->name('index');
         Route::get('/create', [CategoryController::class, 'create'])->name('create');
         Route::post('/', [CategoryController::class, 'store'])->name('store');
-        Route::get('/{id}/edit', [CategoryController::class, 'edit'])->name('edit');
-        Route::patch('/{id}', [CategoryController::class, 'update'])->name('update');
-        Route::delete('/{id}', [CategoryController::class, 'destroy'])->name('destroy');
+        Route::get('/{slug}/edit', [CategoryController::class, 'edit'])->name('edit');
+        Route::patch('/{slug}', [CategoryController::class, 'update'])->name('update');
+        Route::delete('/{slug}', [CategoryController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('book')->name('book.')->group(function () {
@@ -67,8 +67,8 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     });
 
     Route::prefix('loans')->name('loans.')->group(function () {
-        Route::get('/', [LoanController::class, 'adminIndex'])->name('index');
-        Route::get('/history', [LoanController::class, 'adminHistory'])->name('history');
+        // Route::get('/', [LoanController::class, 'adminIndex'])->name('index');
+        Route::get('/', [LoanController::class, 'adminHistory'])->name('history');
     });
 
     Route::get('/profile', [ProfileController::class, 'showAdmin'])->name('profile');

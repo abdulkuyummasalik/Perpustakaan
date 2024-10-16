@@ -52,8 +52,14 @@
             </div>
             <div class="mb-3">
                 <label for="image" class="form-label">Upload Gambar</label>
-                <input type="file" name="image" class="form-control" accept="image/*">
+                <input type="file" id="image" name="image" class="form-control" accept="image/*" onchange="previewImage(event)">
+            
+                <div class="d-flex justify-content-center">
+                    <img id="preview" src="" alt="Pratinjau Gambar"
+                        style="display: none; max-width: 20%; aspect-ratio: 3 / 4; object-fit: cover; margin-top: 10px; border: 1px solid #ddd; padding: 5px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                </div>
             </div>
+
             <div class="d-flex justify-content-between">
                 <a href="{{ route('admin.book.index') }}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Kembali
@@ -65,3 +71,19 @@
         </form>
     </div>
 @endsection
+
+@push('script')
+    <script>
+        function previewImage(event) {
+            const preview = document.getElementById('preview');
+            const file = event.target.files[0];
+            if (file) {
+                preview.src = URL.createObjectURL(file);
+                preview.style.display = 'block';
+            } else {
+                preview.src = '';
+                preview.style.display = 'none';
+            }
+        }
+    </script>
+@endpush

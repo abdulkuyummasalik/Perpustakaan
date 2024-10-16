@@ -51,25 +51,18 @@ class BookController extends Controller
             'image' => 'nullable|image'
         ]);
 
-        $book = new Book();
-        $book->title = $request->input('title');
-        $book->author = $request->input('author');
-        $book->publisher = $request->input('publisher');
-        $book->year = $request->input('year');
-        $book->stock = $request->input('stock');
-        $book->category_id = $request->input('category_id');
-
-        $book->slug = Str::slug($request->input('title'));
+        $book = $request->only(['title', 'author', 'publisher', 'year', 'stock', 'category_id']);
+        $book['slug'] = Str::slug($request->input('title'));
 
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('books', 'public');
-            $book->image = $imagePath;
+            $book['image'] = $request->file('image')->store('books', 'public');
         }
 
-        $book->save();
+        Book::create($book);
 
         return redirect()->route('admin.book.index')->with('success', 'Buku berhasil ditambahkan');
     }
+
 
     public function edit($slug)
     {
@@ -93,27 +86,20 @@ class BookController extends Controller
         ]);
 
         $book = Book::where('slug', $slug)->firstOrFail();
-
-        $book->title = $request->input('title');
-        $book->author = $request->input('author');
-        $book->publisher = $request->input('publisher');
-        $book->year = $request->input('year');
-        $book->stock = $request->input('stock');
-        $book->category_id = $request->input('category_id');
+        $data = $request->only(['title', 'author', 'publisher', 'year', 'stock', 'category_id']);
+        $data['slug'] = Str::slug($data['title']);
 
         if ($request->hasFile('image')) {
             if ($book->image && Storage::exists('public/' . $book->image)) {
                 Storage::delete('public/' . $book->image);
             }
 
-            $imagePath = $request->file('image')->store('books', 'public');
-            $book->image = $imagePath;
+            $data['image'] = $request->file('image')->store('books', 'public');
         }
+        $book->update($data);
 
-        $book->save();
         return redirect()->route('admin.book.index')->with('success', 'Buku berhasil diperbarui');
     }
-
 
     public function destroy(Book $book)
     {
@@ -130,9 +116,9 @@ class BookController extends Controller
     {
         $search = $request->input('search');
         $books = Book::when($search, function ($query, $search) {
-                return $query->where('title', 'LIKE', "%{$search}%")
-                    ->orWhere('author', 'LIKE', "%{$search}%");
-            })
+            return $query->where('title', 'LIKE', "%{$search}%")
+                ->orWhere('author', 'LIKE', "%{$search}%");
+        })
             ->simplePaginate(5);
 
 

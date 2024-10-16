@@ -57,8 +57,9 @@
                                         <td>{{ ($books->currentPage() - 1) * $books->perPage() + ($key + 1) }}</td>
                                         <td>
                                             <img src="{{ asset('storage/' . $book->image) }}" alt="{{ $book->title }}"
-                                                class="img-thumbnail rounded-0" style="width: 5rem; height: 5.5rem;">
-                                        </td>
+                                                class="img-thumbnail rounded-0" 
+                                                style="width: 5rem; aspect-ratio: 3 / 4; object-fit: cover;">
+                                        </td>                                        
                                         <td>{{ $book->title }}</td>
                                         <td>{{ $book->author }}</td>
                                         <td>{{ $book->publisher }}</td>

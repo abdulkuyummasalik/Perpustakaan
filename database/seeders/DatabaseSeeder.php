@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         foreach ($categories as $categoryName) {
             Category::create([
                 'name' => $categoryName,
+                'slug'=> Str::slug($categoryName),
             ]);
         }
 
@@ -53,7 +54,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::create([
-            'name' => 'Hello World',
+            'name' => 'Muhammad Anwar',
             'email' => 'user@gmail.com',
             'password' => Hash::make('password'),
             'role' => 'user',

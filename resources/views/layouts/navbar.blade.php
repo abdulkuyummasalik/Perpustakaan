@@ -10,12 +10,12 @@
         </button>
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
             <ul class="navbar-nav align-items-center">
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->is('/') ? 'active' : '' }}" href="/">
-                        <i class="bi bi-house-door-fill me-1"></i> Beranda
-                    </a>
-                </li>
                 @if (Auth::check())
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('/') ? 'active' : '' }}" href="/">
+                            <i class="bi bi-house-door-fill me-1"></i> Beranda
+                        </a>
+                    </li>
                     @if (Auth::user()->role == 'admin')
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle {{ request()->is('admin/book*') ? 'active' : '' }}"
@@ -29,18 +29,11 @@
                                         Kategori</a></li>
                             </ul>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle {{ request()->is('admin/loans*') ? 'active' : '' }}"
-                                href="#" id="loanDropdown" role="button" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                <i class="bi bi-journal-bookmark me-1"></i> Peminjaman
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->is('admin/loans*') ? 'active' : '' }}"
+                                href="{{ route('admin.loans.history') }}">
+                                <i class="bi bi-clock-history me-1"></i> Peminjaman
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="loanDropdown">
-                                <li><a class="dropdown-item" href="{{ route('admin.loans.index') }}">Peminjaman
-                                        Aktif</a></li>
-                                <li><a class="dropdown-item" href="{{ route('admin.loans.history') }}">Riwayat
-                                        Peminjaman</a></li>
-                            </ul>
                         </li>
                     @else
                         <li class="nav-item">

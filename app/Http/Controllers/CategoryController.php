@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -28,29 +29,37 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $request->validate(['name' => 'required|string|max:255']);
-        Category::create($request->only('name'));
+
+        $category = $request->only(['name']);
+        $category['slug'] = Str::slug($request->input('name'));
+
+        Category::create($category);
 
         return redirect()->route('admin.category.index')->with('success', 'Kategori berhasil ditambahkan.');
     }
 
-    public function edit($id)
+    public function edit($slug)
     {
-        $category = Category::findOrFail($id);
+        $category = Category::where('slug', $slug)->firstOrFail();
+
         return view('admin.categories.edit', compact('category'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $slug)
     {
         $request->validate(['name' => 'required|string|max:255']);
-        $category = Category::findOrFail($id);
-        $category->update($request->only('name'));
+
+        $category = Category::findOrFail($slug);
+        $category['slug'] = Str::slug($request->input('name'));
+
+        $category->update($request->only('name','slug'));
 
         return redirect()->route('admin.category.index')->with('success', 'Kategori berhasil diperbarui.');
     }
 
-    public function destroy($id)
+    public function destroy($slug)
     {
-        $category = Category::findOrFail($id);
+        $category = Category::findOrFail($slug);
         $category->delete();
 
         return redirect()->route('admin.category.index')->with('deleted', 'Kategori berhasil dihapus.');

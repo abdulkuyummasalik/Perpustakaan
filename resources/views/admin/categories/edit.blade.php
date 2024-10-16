@@ -18,7 +18,7 @@
                         <a href="{{ route('admin.category.index') }}" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i> Batal
                         </a>
-                        <button type="submit" class="btn btn-success">
+                        <button type="submit" class="btn btn-warning text-white">
                             <i class="fas fa-save"></i> Update
                         </button>
                     </div>

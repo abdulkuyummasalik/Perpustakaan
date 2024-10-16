@@ -1,6 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
+    @if (session('canAccess'))
+        <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <strong>Peringatan: </strong> {{ session('canAccess') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <!-- Belum Login -->
     @guest
         <section class="hero d-flex align-items-center">
@@ -12,10 +20,6 @@
                 <a href="{{ route('login') }}" class="btn btn-lg btn-primary px-5 mt-4 shadow-sm rounded-pill">
                     <i class="bi bi-box-arrow-in-right me-2"></i> Login Sekarang
                 </a>
-                {{-- <div class="mt-5">
-                    <img src="path_to_welcome_image.jpg" alt="Perpustakaan" class="img-fluid rounded-3 shadow-lg"
-                        style="max-height: 400px;">
-                </div> --}}
             </div>
         </section>
     @endguest
@@ -65,7 +69,7 @@
                                     <i class="bi bi-bar-chart-line display-4 text-primary mb-3"></i>
                                     <h5 class="card-title fw-bold">Statistik Peminjaman</h5>
                                     <p class="card-text">Pantau statistik peminjaman buku dengan mudah.</p>
-                                    <a href="{{ route('admin.loans.index') }}"
+                                    <a href="{{ route('admin.loans.history') }}"
                                         class="btn btn-outline-primary rounded-pill mt-auto">
                                         Lihat Statistik
                                     </a>

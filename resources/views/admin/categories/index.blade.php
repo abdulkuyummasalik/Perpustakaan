@@ -62,7 +62,7 @@
                                                     class="btn btn-warning btn-sm rounded-0 me-2" title="Edit">
                                                     <i class="fas fa-edit"></i> Edit
                                                 </a>
-                                                <form action="{{ route('admin.category.destroy', $category->slug) }}"
+                                                <form action="{{ route('admin.category.destroy', $category->id) }}"
                                                     method="POST">
                                                     @csrf
                                                     @method('DELETE')

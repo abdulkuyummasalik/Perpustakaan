@@ -67,7 +67,6 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     });
 
     Route::prefix('loans')->name('loans.')->group(function () {
-        // Route::get('/', [LoanController::class, 'adminIndex'])->name('index');
         Route::get('/', [LoanController::class, 'adminHistory'])->name('history');
     });
 

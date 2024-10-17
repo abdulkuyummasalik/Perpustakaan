@@ -32,7 +32,7 @@
                     <div class="card-body">
                         <h5>Total Peminjaman</h5>
                         <p class="fs-4">{{ $totalLoans }}</p>
-                        <a href="{{ route('admin.loans.index') }}" class="btn btn-light rounded-0">Lihat Peminjaman</a>
+                        <a href="{{ route('admin.loans.history') }}" class="btn btn-light rounded-0">Lihat Peminjaman</a>
                     </div>
                 </div>
             </div>

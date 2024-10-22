@@ -5,6 +5,8 @@
         <div class="card shadow-lg">
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h3 class="mb-0">Profil Pengguna</h3>
+                {{-- tombol ganti password --}}
+                <a href="{{ route('user.profile.edit') }}" class="btn btn-sm btn-warning">Ganti Password</a>
             </div>
             <div class="card-body">
                 <div class="row mb-3">

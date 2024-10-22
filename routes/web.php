@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -71,7 +72,7 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     });
 
     Route::get('/profile', [ProfileController::class, 'showAdmin'])->name('profile');
-});
+    });
 
 
 // Route untuk user
@@ -87,5 +88,9 @@ Route::prefix('user')->name('user.')->middleware('user')->group(function () {
         Route::post('/return/{id}', [LoanController::class, 'return'])->name('return');
     });
 
-    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::prefix('profile')->name('profile.')->group(function(){
+        Route::get('/edit', [UserController::class, 'editProfile'])->name('edit');
+        Route::patch('/update', [UserController::class, 'updateProfile'])->name('update');
+        Route::get('/', [ProfileController::class, 'show'])->name('index');
+    });
 });

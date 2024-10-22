@@ -96,7 +96,7 @@
                                     <i class="bi bi-person-lines-fill display-4 text-primary mb-3"></i>
                                     <h5 class="card-title fw-bold">Profil Saya</h5>
                                     <p class="card-text">Kelola informasi akun dan lihat riwayat peminjaman Anda.</p>
-                                    <a href="{{ route('user.profile') }}" class="btn btn-outline-primary rounded-pill mt-auto">
+                                    <a href="{{ route('user.profile.index') }}" class="btn btn-outline-primary rounded-pill mt-auto">
                                         Lihat Profil
                                     </a>
                                 </div>

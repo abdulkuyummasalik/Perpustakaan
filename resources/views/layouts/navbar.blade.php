@@ -51,13 +51,13 @@
                     @endif
                     <li class="nav-item dropdown">
                         @if (Auth::user()->role == 'admin')
-                            <a class="nav-link dropdown-toggle {{ request()->is('admin/profile') ? 'active' : '' }}"
+                            <a class="nav-link dropdown-toggle {{ request()->is('admin/profile*') ? 'active' : '' }}"
                                 href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">
                                 <i class="bi bi-person-circle me-1"></i> {{ Auth::user()->name }}
                             </a>
                         @else
-                            <a class="nav-link dropdown-toggle {{ request()->is('user/profile') ? 'active' : '' }}"
+                            <a class="nav-link dropdown-toggle {{ request()->is('user/profile*') ? 'active' : '' }}"
                                 href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">
                                 <i class="bi bi-person-circle me-1"></i> {{ Auth::user()->name }}
@@ -75,7 +75,7 @@
                             @else
                                 <li>
                                     <a class="dropdown-item d-flex align-items-center"
-                                        href="{{ route('user.profile') }}">
+                                        href="{{ route('user.profile.index') }}">
                                         <i class="bi bi-person-circle me-2"></i>
                                         Profil
                                     </a>

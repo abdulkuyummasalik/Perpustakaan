@@ -37,6 +37,7 @@
                                     <th>Judul Buku</th>
                                     <th>Tanggal Dipinjam</th>
                                     <th>Tanggal Dikembalikan</th>
+                                    <th>Denda</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -55,7 +56,9 @@
                                                 </button>
                                             @endif
                                         </td>
-
+                                        <td>
+                                            Rp {{ number_format($loan->calculateFine() ?? 0) }}
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>

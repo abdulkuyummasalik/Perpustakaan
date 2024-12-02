@@ -12,8 +12,11 @@ class CreateLoansTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('book_id')->constrained()->onDelete('cascade');
-            $table->timestamp('borrowed_at')->nullable();
-            $table->timestamp('returned_at')->nullable();
+            $table->timestamp('borrowed_at')->nullable(); // peminjaman
+            $table->timestamp('returned_at')->nullable(); // pengembalian
+            $table->timestamp('due_date')->nullable(); // batas peminjaman
+            $table->integer('fine')->default(0); // denda
+            $table->integer('final_fine')->nullable(); // untuk denda akhir yang disimpan
             $table->softDeletes();
             $table->timestamps();
         });

@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Auth;
 
 class LoanController extends Controller
 {
+    const BORROW_DURATION_DAYS = 7; // Durasi peminjaman dalam hari
+    const FINE_PER_DAY = 1000; // Denda per hari per buku
+
+    // Untuk Admin
     public function adminHistory(Request $request)
     {
         $search = $request->input('search');
@@ -26,33 +30,30 @@ class LoanController extends Controller
         return view('admin.loans.history', compact('loans', 'search'));
     }
 
-
     // Untuk User
     public function index(Request $request)
     {
-        // Peminjaman Aktif
-        $loansQuery = Loan::with('book')->where('user_id', auth()->id())->whereNull('returned_at');
+        $userId = Auth::id();
 
-        if ($request->has('search') && !empty($request->search)) {
-            $loansQuery->whereHas('book', function ($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->search . '%')
+        // Peminjaman aktif
+        $loansQuery = Loan::with('book')->where('user_id', $userId)->whereNull('returned_at');
+        if ($request->filled('search')) {
+            $loansQuery->whereHas('book', function ($query) use ($request) {
+                $query->where('title', 'like', '%' . $request->search . '%')
                     ->orWhere('author', 'like', '%' . $request->search . '%');
             });
         }
+        $loans = $loansQuery->simplePaginate(10);
 
-        $loans = $loansQuery->simplePaginate(5);
-
-        // Riwayat Peminjaman
-        $historyQuery = Loan::with('book')->where('user_id', auth()->id())->whereNotNull('returned_at');
-
-        if ($request->has('search') && !empty($request->search)) {
-            $historyQuery->whereHas('book', function ($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->search . '%')
+        // Riwayat peminjaman
+        $historyQuery = Loan::with('book')->where('user_id', $userId)->whereNotNull('returned_at');
+        if ($request->filled('search')) {
+            $historyQuery->whereHas('book', function ($query) use ($request) {
+                $query->where('title', 'like', '%' . $request->search . '%')
                     ->orWhere('author', 'like', '%' . $request->search . '%');
             });
         }
-
-        $history = $historyQuery->simplePaginate(5);
+        $history = $historyQuery->simplePaginate(10);
 
         return view('user.loans.index', compact('loans', 'history'));
     }
@@ -62,14 +63,14 @@ class LoanController extends Controller
         $book = Book::findOrFail($id);
 
         if ($book->stock > 0) {
-            $book->stock--;
-            $book->save();
+            $book->decrement('stock');
 
-            $loan = new Loan();
-            $loan->user_id = Auth::id();
-            $loan->book_id = $book->id;
-            $loan->borrowed_at = now();
-            $loan->save();
+            Loan::create([
+                'user_id' => Auth::id(),
+                'book_id' => $book->id,
+                'borrowed_at' => now(),
+                'due_date' => now()->addDays(self::BORROW_DURATION_DAYS), // Mengatur tanggal jatuh tempo
+            ]);
 
             return redirect()->route('user.loans.index')->with('success', 'Buku berhasil dipinjam.');
         } else {
@@ -81,12 +82,13 @@ class LoanController extends Controller
     {
         $loan = Loan::findOrFail($id);
 
-        if ($loan->returned_at === null) {
+        if (is_null($loan->returned_at)) {
+            // Hitung denda jika ada
+            $loan->final_fine = $loan->calculateFine(); // Panggil metode dari model
             $loan->returned_at = now();
             $loan->save();
 
-            $book = $loan->book;
-            $book->increment('stock');
+            $loan->book->increment('stock');
         }
 
         return redirect()->route('user.loans.index')->with('success', 'Buku berhasil dikembalikan.');

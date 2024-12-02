@@ -28,6 +28,8 @@
                         </form>
                     </div>
                 </div>
+
+                {{-- Peminjaman Aktif --}}
                 <div class="mb-4">
                     <h4 class="fw-bold text-center mb-3">Peminjaman Aktif</h4>
                     @if ($loans->isEmpty())
@@ -47,6 +49,8 @@
                                         <th>No</th>
                                         <th>Judul Buku</th>
                                         <th>Tanggal Dipinjam</th>
+                                        <th>Batas Waktu</th>
+                                        <th>Denda</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -55,7 +59,9 @@
                                         <tr class="text-center">
                                             <td>{{ ($loans->currentPage() - 1) * $loans->perPage() + ($key + 1) }}</td>
                                             <td class="text-start">{{ $loan->book->title }}</td>
-                                            <td>{{ $loan->borrowed_at->format('d-m-Y') }}</td>
+                                            <td>{{ $loan->borrowed_at->format('d-m-Y H:i') }}</td>
+                                            <td>{{ $loan->due_date->format('d-m-Y H:i') }}</td>
+                                            <td>Rp {{ number_format($loan->calculateFine()) }}</td>
                                             <td>
                                                 <form action="{{ route('user.loans.return', $loan->id) }}" method="POST"
                                                     onsubmit="return confirm('Apakah Anda yakin ingin mengembalikan buku ini?');">
@@ -75,6 +81,8 @@
                         </div>
                     @endif
                 </div>
+
+                {{-- Riwayat Peminjaman --}}
                 <div>
                     <h4 class="text-center fw-bold mb-3">Riwayat Peminjaman</h4>
                     @if ($history->isEmpty())
@@ -83,18 +91,19 @@
                                 Tidak ada riwayat peminjaman yang ditemukan untuk kata kunci
                                 "<strong>{{ request()->input('search') }}</strong>".
                             @else
-                                Tidak ada riwayat peminjaman saat ini.
+                                Tidak ada riwayat peminjaman.
                             @endif
                         </div>
                     @else
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover align-middle">
-                                <thead class="table-primary text-center">
+                            <table class="table table-bordered table-hover rounded-lg align-middle">
+                                <thead class="table-secondary text-center">
                                     <tr>
                                         <th>No</th>
                                         <th>Judul Buku</th>
                                         <th>Tanggal Dipinjam</th>
                                         <th>Tanggal Dikembalikan</th>
+                                        <th>Denda</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -103,8 +112,8 @@
                                             <td>{{ ($history->currentPage() - 1) * $history->perPage() + ($key + 1) }}</td>
                                             <td class="text-start">{{ $loan->book->title }}</td>
                                             <td>{{ $loan->borrowed_at->format('d-m-Y') }}</td>
-                                            <td>{{ $loan->returned_at ? $loan->returned_at->format('d-m-Y') : 'Belum dikembalikan' }}
-                                            </td>
+                                            <td>{{ $loan->returned_at->format('d-m-Y') }}</td>
+                                            <td>Rp {{ number_format($loan->final_fine) }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>

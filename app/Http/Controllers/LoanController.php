@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Loan;
+use App\Exports\LoansExport;
+use App\Http\Controllers\Controller;
 use App\Models\Book;
+use App\Models\Loan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LoanController extends Controller
 {
     const BORROW_DURATION_DAYS = 7; // Durasi peminjaman dalam hari
-    const FINE_PER_DAY = 1000; // Denda per hari per buku
+    const FINE_PER_MINUTE = 100;
 
     // Untuk Admin
     public function adminHistory(Request $request)
@@ -28,6 +31,13 @@ class LoanController extends Controller
             ->simplePaginate(10);
 
         return view('admin.loans.history', compact('loans', 'search'));
+    }
+
+    public function exportExcell()
+    {
+        $file_name = 'riwayat_peminjaman.xlsx';
+
+        return Excel::download(new LoansExport(), $file_name);
     }
 
     // Untuk User
@@ -69,7 +79,7 @@ class LoanController extends Controller
                 'user_id' => Auth::id(),
                 'book_id' => $book->id,
                 'borrowed_at' => now(),
-                'due_date' => now()->addDays(self::BORROW_DURATION_DAYS), // Mengatur tanggal jatuh tempo
+                'due_date' => now()->addMinutes(1), // Mengatur tanggal jatuh tempo 1 menit setelah pinjam
             ]);
 
             return redirect()->route('user.loans.index')->with('success', 'Buku berhasil dipinjam.');
@@ -77,6 +87,7 @@ class LoanController extends Controller
             return redirect()->route('user.loans.index')->with('error', 'Stok buku tidak tersedia.');
         }
     }
+
 
     public function return($id)
     {

@@ -46,10 +46,10 @@ class Loan extends Model
         $now = now();
         $dueDate = $this->due_date;
 
-        // Hitung denda berdasarkan hari
+        // Hitung denda berdasarkan menit
         if ($now->greaterThan($dueDate)) {
-            $daysLate = $now->diffInDays($dueDate);
-            return $daysLate * LoanController::FINE_PER_DAY; // denda per hari
+            $minutesLate = $now->diffInMinutes($dueDate); // Menghitung keterlambatan dalam menit
+            return $minutesLate * LoanController::FINE_PER_MINUTE; // denda per menit
         }
 
         return 0;

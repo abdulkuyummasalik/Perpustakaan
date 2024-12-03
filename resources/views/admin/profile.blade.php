@@ -70,10 +70,10 @@
                                     <tr>
                                         <td class="text-start">{{ $loan->user->name }}</td>
                                         <td class="text-start">{{ $loan->book->title }}</td>
-                                        <td>{{ $loan->borrowed_at->format('d-m-Y') }}</td>
+                                        <td>{{ $loan->borrowed_at->timezone('Asia/Jakarta')->format('d-m-Y') }}</td>
                                         <td>
                                             @if ($loan->returned_at)
-                                                {{ $loan->returned_at->format('d-m-Y') }}
+                                                {{ $loan->returned_at->timezone('Asia/Jakarta')->format('d-m-Y') }}
                                             @else
                                                 <span class="text-danger">Belum Kembali</span>
                                             @endif

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateLoansTable extends Migration
 {
+
     public function up()
     {
         Schema::create('loans', function (Blueprint $table) {

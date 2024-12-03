@@ -59,8 +59,8 @@
                                         <tr class="text-center">
                                             <td>{{ ($loans->currentPage() - 1) * $loans->perPage() + ($key + 1) }}</td>
                                             <td class="text-start">{{ $loan->book->title }}</td>
-                                            <td>{{ $loan->borrowed_at->format('d-m-Y H:i') }}</td>
-                                            <td>{{ $loan->due_date->format('d-m-Y H:i') }}</td>
+                                            <td>{{ $loan->borrowed_at->timezone('Asia/Jakarta')->format('d-m-Y H:i') }}</td>
+                                            <td>{{ $loan->due_date->timezone('Asia/Jakarta')->format('d-m-Y H:i') }}</td>
                                             <td>Rp {{ number_format($loan->calculateFine()) }}</td>
                                             <td>
                                                 <form action="{{ route('user.loans.return', $loan->id) }}" method="POST"
@@ -111,8 +111,8 @@
                                         <tr class="text-center">
                                             <td>{{ ($history->currentPage() - 1) * $history->perPage() + ($key + 1) }}</td>
                                             <td class="text-start">{{ $loan->book->title }}</td>
-                                            <td>{{ $loan->borrowed_at->format('d-m-Y') }}</td>
-                                            <td>{{ $loan->returned_at->format('d-m-Y') }}</td>
+                                            <td>{{ $loan->borrowed_at->timezone('Asia/Jakarta')->format('d-m-Y') }}</td>
+                                            <td>{{ $loan->returned_at->timezone('Asia/Jakarta')->format('d-m-Y') }}</td>
                                             <td>Rp {{ number_format($loan->final_fine) }}</td>
                                         </tr>
                                     @endforeach

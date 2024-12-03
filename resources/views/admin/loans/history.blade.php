@@ -8,7 +8,7 @@
             </div>
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <form action="{{ route('admin.loans.history') }}" method="GET" class="w-100">
+                    <form action="{{ route('admin.loans.history') }}" method="GET" class="col-10">
                         <div class="input-group">
                             <input type="text" name="search" class="form-control rounded-0"
                                 placeholder="Cari pengguna atau buku..." value="{{ request('search') }}">
@@ -17,6 +17,9 @@
                             </button>
                         </div>
                     </form>
+                    <a href="{{ route('admin.loans.exportExcell') }}" class="= col-2 btn btn-success rounded-0">
+                        <i class="fas fa-file-excel"></i> Export Excel
+                    </a>
                 </div>
                 @if ($loans->isEmpty())
                     <div class="alert alert-warning">
@@ -46,10 +49,10 @@
                                         <td>{{ ($loans->currentPage() - 1) * $loans->perPage() + ($key + 1) }}</td>
                                         <td>{{ $loan->user->name }}</td>
                                         <td>{{ $loan->book->title }}</td>
-                                        <td>{{ $loan->borrowed_at->format('d-m-Y') }}</td>
+                                        <td>{{ $loan->borrowed_at->timezone('Asia/Jakarta')->format('d-m-Y') }}</td>
                                         <td>
                                             @if ($loan->returned_at)
-                                                {{ $loan->returned_at->format('d-m-Y') }}
+                                                {{ $loan->returned_at->timezone('Asia/Jakarta')->format('d-m-Y') }}
                                             @else
                                                 <button class="btn btn-danger btn-sm rounded-0">
                                                     <i class="fas fa-times-circle"></i> Belum Dikembalikan

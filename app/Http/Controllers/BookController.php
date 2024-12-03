@@ -26,8 +26,8 @@ class BookController extends Controller
                     ->orWhereHas('category', function ($q) use ($search) {
                         $q->where('name', 'LIKE', "%{$search}%");
                     });
-            })
-            ->simplePaginate(5);
+            })->orderBy('created_at', 'desc')
+            ->simplePaginate(10);
 
         return view('admin.books.index', compact('books', 'search'));
     }
@@ -119,6 +119,7 @@ class BookController extends Controller
             return $query->where('title', 'LIKE', "%{$search}%")
                 ->orWhere('author', 'LIKE', "%{$search}%");
         })
+            ->orderBy('created_at', 'desc')
             ->simplePaginate(5);
 
 
